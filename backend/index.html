@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    </head>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            background-color: rgb(33, 40, 44);
+            color: white;
+            min-height: 100vh;
+            width: 500px;
+            margin: 0 auto;
+            position: relative;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        form {
+            position: absolute;
+            bottom: 10%;
+            left: 0%;
+            right: 0%;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+        }
+        input {
+            /* flex: 1; */
+            padding: 1rem;
+            /* border: none; */
+            outline: none;
+            width: 100px;
+        }
+        button {
+            border: none;
+            padding: 1rem;
+            background-color: rgb(4, 134, 15);
+            color: white;
+            cursor: pointer;
+        }
+        #msg-container {
+            max-height: 400px;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+        li {
+            display: inline;
+            list-style: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+        }
+        .sent-msg {
+            background-color: rgb(0, 139, 219);
+            float: right;
+        }
+        .received-msg {
+            background-color: rgb(0, 139, 219);
+            float: left;
+        }
+        .timestamp {
+            font-size: 8px;
+        }
+        .file-container {
+            width: 100px;
+        }
+        .file-container > * {
+            width: 100%;
+        }
+    </style>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        $(document).ready(function () {
+            let username = prompt("Enter User Name");
+            const user = document.createElement("h2");
+            user.textContent = username;
+            $("body").prepend(user);
+            socket.emit("username", username);
+            const msgContainer = $("#msg-container");
+            const form = $("#send-form");
+            const getDate = () => {
+                const currentDate = new Date();
+
+                const dayOfWeek = currentDate.toLocaleString("en", {
+                    weekday: "short",
+                });
+
+                const hours = currentDate.getHours();
+                const minutes = currentDate.getMinutes();
+                const amOrPm = hours >= 12 ? "PM" : "AM";
+                const formattedHours = hours % 12 || 12; // Convert midnight (0) to 12
+                const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+                const formattedTime = `${formattedHours}:${formattedMinutes} ${amOrPm}`;
+
+                const formattedDate = `${dayOfWeek}, ${formattedTime}`;
+
+                return formattedDate;
+            };
+            $(form).submit((e) => {
+                e.preventDefault();
+                let receiver = $("#recipient-name")[0].value;
+                const fileInput = $("#file-upload")[0];
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    const reader = new FileReader();
+
+                    reader.onload = function (event) {
+                        const fileData = event.target.result;
+                        console.log("Sending...");
+                        console.log(fileData);
+                        socket.emit("file", {
+                            sender: username,
+                            receiver,
+                            file: fileData,
+                        });
+                        console.log("Sent..");
+                    };
+                    fileInput.value = "";
+                    reader.readAsDataURL(file);
+                } else {
+                    let inp = $("#msg-input")[0].value;
+
+                    const cont = document.createElement("div");
+                    const send = document.createElement("li");
+                    const timestamp = document.createElement("div");
+
+                    timestamp.textContent = getDate();
+                    $(timestamp).addClass("timestamp");
+
+                    $(cont).append(timestamp);
+                    $(cont).append(send);
+
+                    send.textContent = inp;
+                    $(send).addClass("sent-msg");
+
+                    $(msgContainer).append(cont);
+                    console.log(username, receiver, inp);
+                    socket.emit("msg", {
+                        sender: username,
+                        receiver,
+                        data: inp,
+                    });
+                }
+            });
+
+            socket.on("file", ({ sender, file }) => {
+                const cont = document.createElement("div");
+                const messageContent = document.createElement("div");
+                const timestamp = document.createElement("div");
+
+                timestamp.textContent = getDate();
+                $(timestamp).addClass("timestamp");
+                $(cont).append(timestamp);
+
+                if (file) {
+                    const fileType = file.split(";")[0].split(":")[1];
+                    const fileContainer = document.createElement("div");
+                    $(cont).append(fileContainer);
+                    fileContainer.classList.add("file-container");
+                    if (fileType.startsWith("image")) {
+                        const image = new Image();
+                        image.src = file;
+                        $(fileContainer).append(image);
+                    } else if (fileType.startsWith("audio")) {
+                        const audio = new Audio(file);
+                        audio.controls = true;
+                        $(fileContainer).append(audio);
+                    } else if (fileType.startsWith("video")) {
+                        const video = document.createElement("video");
+                        video.src = file;
+                        video.controls = true;
+                        $(fileContainer).append(video);
+                    } else if (fileType.startsWith("application/pdf")) {
+                        // Handle PDF
+                        const pdfEmbed = document.createElement("embed");
+                        pdfEmbed.src = file;
+                        pdfEmbed.type = "application/pdf";
+                        pdfEmbed.width = "100%";
+                        pdfEmbed.height = "600";
+                        $(fileContainer).append(pdfEmbed);
+                    } else {
+                        // For unsupported file types, provide a download link
+                        const downloadLink = document.createElement("a");
+                        downloadLink.href = file;
+                        downloadLink.download = "file";
+                        downloadLink.textContent = "Download File";
+                        $(fileContainer).append(downloadLink);
+                    }
+                }
+
+                $(msgContainer).append(cont);
+            });
+
+            socket.on("msg", ({ sender, data }) => {
+                const cont = document.createElement("div");
+                const reply = document.createElement("li");
+
+                const timestamp = document.createElement("div");
+                timestamp.textContent = getDate();
+                $(timestamp).addClass("timestamp");
+
+                $(cont).append(timestamp);
+                $(cont).append(reply);
+
+                cont.appendChild(reply);
+                reply.textContent = data;
+                $(reply).addClass("received-msg");
+                $(msgContainer).append(cont);
+            });
+        });
+    </script>
+    <body>
+        <h1>Message APP</h1>
+        <div id="msg-container"></div>
+        <form class="form" action="" id="send-form">
+            <input
+                id="recipient-name"
+                type="text"
+                name="msg"
+                autocomplete="off"
+            />
+            <input id="msg-input" type="text" name="msg" autocomplete="off" />
+            <input type="file" id="file-upload" />
+            <button type="submit">Submit</button>
+        </form>
+    </body>
+</html>
