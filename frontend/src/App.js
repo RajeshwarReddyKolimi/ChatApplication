@@ -6,14 +6,14 @@ import Chat from "./Components/Chat";
 function App() {
     return (
         <div className="App">
-            Hello
-            {/* <BrowserRouter>
+            {/* Hello */}
+            <BrowserRouter>
                 <Routes>
                     <Route index element={<Dashboard />} />
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/:username/:friend" element={<Chat />} />
                 </Routes>
-            </BrowserRouter> */}
+            </BrowserRouter>
         </div>
     );
 }
