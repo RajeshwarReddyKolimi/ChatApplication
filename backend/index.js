@@ -11,10 +11,8 @@ const cors = require("cors");
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
-    cors: {
-        origin: "http://localhost:3001",
-        maxHttpBufferSize: 1e8,
-    },
+    cors: {},
+    maxHttpBufferSize: 1e8,
 });
 
 dbConnect();

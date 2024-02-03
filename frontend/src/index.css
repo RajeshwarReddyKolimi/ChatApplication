@@ -48,16 +48,14 @@ code {
 .sent-msg {
     background-color: rgb(0, 139, 219);
     float: right;
-    width: 300px;
-    height: 300px;
+    max-width: 300px;
     overflow: hidden;
     text-align: right;
 }
 .received-msg {
     background-color: rgb(0, 139, 219);
     float: left;
-    width: 300px;
-    height: 300px;
+    max-width: 300px;
     overflow: hidden;
 }
 .send-form {

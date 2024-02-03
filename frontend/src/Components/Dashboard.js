@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { socket } from "../socket";
+import backendURL from "../backendURL";
 
 export default function Dashboard() {
     const [username, setUsername] = useState();
     const [users, setUsers] = useState([]);
-    const url = `http://localhost:3000`;
+    const url = backendURL;
     const endpoint = `users/${username}`;
     const fetchUsers = async (user) => {
         try {

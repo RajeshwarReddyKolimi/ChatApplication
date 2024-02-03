@@ -2,12 +2,13 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import { socket } from "../socket";
+import backendURL from "../backendURL";
 
 function Chat() {
     const [messages, setMessages] = useState([]);
     const inputRef = useRef();
     const inputFileRef = useRef();
-    const url = `http://localhost:3000`;
+    const url = backendURL;
     const { username, friend } = useParams();
     // const fetchMessages = async () => {
     //     const endpoint = `${username}/${friend}/messages`;
