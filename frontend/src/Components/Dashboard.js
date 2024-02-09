@@ -1,42 +1,28 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import { socket } from "../socket";
-import backendURL from "../backendURL";
+import { Link, useParams } from "react-router-dom";
+
+import "../styles/dashboard.css";
+import Users from "./Users";
+import { io } from "socket.io-client";
 
 export default function Dashboard() {
-    const [username, setUsername] = useState();
-    const [users, setUsers] = useState([]);
-    const url = backendURL;
-    const endpoint = `users/${username}`;
-    const fetchUsers = async (user) => {
-        try {
-            const res = await axios.get(`${url}/users/${user}`);
-            let data = await res.data;
-            setUsers(data);
-        } catch (e) {
-            console.error(e);
-        }
-    };
+    const [socket, setSocket] = useState();
+    const { userId } = useParams();
     useEffect(() => {
-        const promptUsername = prompt("Enter Username");
-        setUsername(promptUsername);
-        socket.connect();
-        socket.emit("username", promptUsername);
-        fetchUsers(promptUsername);
+        if (userId) {
+            const socket = io("http://localhost:4000", {
+                query: {
+                    userId,
+                },
+            });
+            setSocket(socket);
+        }
     }, []);
 
     return (
-        <div className="users">
-            {users?.map((user, id) => (
-                <Link
-                    to={`/${username}/${user.username}`}
-                    key={user?.username}
-                    className="username"
-                >
-                    {user?.username}
-                </Link>
-            ))}
+        <div className="dashboard-page">
+            <Users socket={socket} />
         </div>
     );
 }
