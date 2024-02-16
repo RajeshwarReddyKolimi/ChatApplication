@@ -9,6 +9,7 @@ const io = new Server(server, {
         origin: [
             "http://localhost:3000",
             "https://master--chitchat-by-rajeshwar.netlify.app",
+            "https://chitchat-by-rajeshwar.netlify.app",
         ],
         methods: ["GET", "POST"],
     },

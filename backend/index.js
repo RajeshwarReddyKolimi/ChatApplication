@@ -19,6 +19,7 @@ app.use(
         origin: [
             "http://localhost:3000",
             "https://master--chitchat-by-rajeshwar.netlify.app",
+            "https://chitchat-by-rajeshwar.netlify.app",
         ],
         credentials: true,
     })
