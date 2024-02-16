@@ -4,6 +4,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
 import { Link, Navigate } from "react-router-dom";
 import { UserContext } from "../App";
+import url from "../backendURL";
 function Login() {
     const { user, setUser } = useContext(UserContext);
     const passwordRef = useRef();
@@ -17,7 +18,7 @@ function Login() {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const endpoint = `http://localhost:4000/api/user/login`;
+            const endpoint = `${url}/api/user/login`;
             const res = await axios.post(`${endpoint}`, formData, {
                 withCredentials: true,
             });

@@ -4,6 +4,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { UserContext } from "../App";
+import url from "../backendURL";
 function Register() {
     const { user, setUser } = useContext(UserContext);
     const navigate = useNavigate();
@@ -19,7 +20,7 @@ function Register() {
     const handleRegister = async (e) => {
         e.preventDefault();
         try {
-            const endpoint = `http://localhost:4000/api/user/register`;
+            const endpoint = `${url}/api/user/register`;
             const res = await axios.post(`${endpoint}`, formData, {
                 withCredentials: true,
             });

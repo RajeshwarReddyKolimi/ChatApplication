@@ -5,6 +5,7 @@ import { MdSend } from "react-icons/md";
 import notification1 from "../assets/notify2.mp3";
 import { io } from "socket.io-client";
 import Loader from "./Loader";
+import url from "../backendURL";
 function Chat({ receiver, user }) {
     const messageRef = useRef();
     const [conversation, setConversation] = useState([]);
@@ -15,7 +16,7 @@ function Chat({ receiver, user }) {
         const message = messageRef.current.value;
         messageRef.current.value = "";
         try {
-            const endpoint = `http://localhost:4000/api/messages/${receiver?._id}`;
+            const endpoint = `${url}/api/messages/${receiver?._id}`;
             const res = await axios.post(
                 `${endpoint}`,
                 { message },
@@ -33,7 +34,7 @@ function Chat({ receiver, user }) {
     const fetchConversation = async () => {
         try {
             setLoading(true);
-            const endpoint = `http://localhost:4000/api/messages/${receiver?._id}`;
+            const endpoint = `${url}/api/messages/${receiver?._id}`;
             const res = await axios.get(`${endpoint}`, {
                 withCredentials: true,
             });
@@ -60,7 +61,7 @@ function Chat({ receiver, user }) {
         setConversation([]);
         if (user?._id) {
             const userId = user?._id;
-            const socket = io("http://localhost:4000", {
+            const socket = io(url, {
                 query: {
                     userId,
                 },

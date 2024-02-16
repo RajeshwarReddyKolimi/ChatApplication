@@ -10,7 +10,7 @@ function UsersList({
     const [users, setUsers] = useState([]);
     const fetchUsers = async () => {
         try {
-            const endpoint = `http://localhost:4000/api/users/search?q=${userSearchInput}`;
+            const endpoint = `${url}/api/users/search?q=${userSearchInput}`;
             const res = await axios.get(`${endpoint}`, {
                 withCredentials: true,
             });
