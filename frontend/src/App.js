@@ -4,22 +4,26 @@ import Dashboard from "./Components/Dashboard";
 import Chat from "./Components/Chat";
 import Register from "./Components/Register";
 import Login from "./Components/Login";
+import { createContext, useState } from "react";
 
+export const UserContext = createContext();
 function App() {
+    const [user, setUser] = useState();
     return (
         <div className="App">
-            {/* Hello */}
-            <BrowserRouter>
-                <Routes>
-                    <Route index element={<Register />} />
-                    <Route path="/user/register" element={<Register />} />
-                    <Route path="/user/login" element={<Login />} />
-                    <Route
-                        path="/user/dashboard/:userId"
-                        element={<Dashboard />}
-                    />
-                </Routes>
-            </BrowserRouter>
+            <UserContext.Provider value={{ user, setUser }}>
+                <BrowserRouter>
+                    <Routes>
+                        <Route index element={<Register />} />
+                        <Route path="/user/register" element={<Register />} />
+                        <Route path="/user/login" element={<Login />} />
+                        <Route
+                            path="/user/dashboard/:userId"
+                            element={<Dashboard />}
+                        />
+                    </Routes>
+                </BrowserRouter>
+            </UserContext.Provider>
         </div>
     );
 }

@@ -1,12 +1,13 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import "../styles/form.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+import { UserContext } from "../App";
 function Login() {
-    const navigate = useNavigate();
+    const { user, setUser } = useContext(UserContext);
     const passwordRef = useRef();
-    const [showPassword, setShowPassword] = useState(false);
+    const [showPassword, setShowPassword] = useState(true);
     const [formData, setFormData] = useState({});
     const handleShowPassword = (e) => {
         e.preventDefault();
@@ -21,55 +22,70 @@ function Login() {
                 withCredentials: true,
             });
             const data = await res.data;
-
-            navigate(`/user/dashboard/${data?._id}`);
+            setUser(data);
         } catch (e) {
             console.log(e);
         }
     };
+    if (user) return <Navigate to={`/user/dashboard/${user?._id}`} replace />;
     return (
-        <div className="form-container" onSubmit={(e) => handleLogin(e)}>
-            <Link to="/user/login">Login</Link>
-            <Link to="/user/register">Register</Link>
-            <Link to="/user/dashboard">Dashboard</Link>
-            <form className="form">
-                <input
-                    type="text"
-                    className="form-input"
-                    placeholder="username"
-                    onChange={(e) =>
-                        setFormData((prev) => {
-                            return { ...prev, username: e.target.value };
-                        })
-                    }
-                />
-
-                <div className="password-container">
+        <div className="form-container">
+            <form className="form" onSubmit={(e) => handleLogin(e)}>
+                <h2>Login</h2>
+                <div className="form-item">
+                    <label htmlFor="username" className="form-label">
+                        Username
+                    </label>
                     <input
-                        type="password"
-                        className="form-input password"
-                        ref={passwordRef}
-                        placeholder="password"
+                        type="text"
+                        className="form-input"
+                        placeholder="username"
+                        name="username"
                         onChange={(e) =>
                             setFormData((prev) => {
-                                return { ...prev, password: e.target.value };
+                                return { ...prev, username: e.target.value };
                             })
                         }
                     />
-                    <button
-                        className="view-password"
-                        onClick={(e) => handleShowPassword(e)}
-                    >
-                        {showPassword ? (
-                            <FaEye className="icon-1" />
-                        ) : (
-                            <FaEyeSlash className="icon-1" />
-                        )}
-                    </button>
+                </div>
+                <div className="form-item">
+                    <label htmlFor="password" className="form-label">
+                        Password
+                    </label>
+                    <div className="password-container">
+                        <input
+                            type="password"
+                            className="form-input password"
+                            ref={passwordRef}
+                            placeholder="password"
+                            onChange={(e) =>
+                                setFormData((prev) => {
+                                    return {
+                                        ...prev,
+                                        password: e.target.value,
+                                    };
+                                })
+                            }
+                        />
+                        <div
+                            className="view-password"
+                            onClick={(e) => handleShowPassword(e)}
+                        >
+                            {showPassword ? (
+                                <FaEye className="icon-1" />
+                            ) : (
+                                <FaEyeSlash className="icon-1" />
+                            )}
+                        </div>
+                    </div>
                 </div>
                 <button type="submit" className="submit-button">
-                    Submit
+                    Login
                 </button>
+                <div className="login-info">
+                    Don't have an Account?{" "}
+                    <Link to="/user/register">Register</Link>{" "}
+                </div>
             </form>
         </div>
     );

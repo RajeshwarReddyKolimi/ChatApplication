@@ -4,6 +4,6 @@ const { validateUser } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-router.get("/", validateUser, getAllUsers);
+router.get("/search", validateUser, getAllUsers);
 
 module.exports = router;

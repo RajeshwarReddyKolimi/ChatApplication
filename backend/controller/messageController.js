@@ -35,8 +35,8 @@ const sendMessage = async (req, res) => {
         await conversation.save();
 
         const receiverSocketId = getReceiverSocketId(receiverId);
-        if (receiverSocketId) io.to(receiverSocketId).emit("message", message);
-
+        if (receiverSocketId)
+            io.to(receiverSocketId).emit("message", { senderId, message });
         res.json({ message: "Message sent" });
     } catch (e) {
         console.error(e);
