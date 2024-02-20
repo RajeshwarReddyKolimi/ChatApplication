@@ -28,7 +28,7 @@ function Login() {
             console.log(e);
         }
     };
-    if (user) return <Navigate to={`/user/dashboard/${user?._id}`} replace />;
+    if (user) return <Navigate to={`/user/dashboard`} replace />;
     return (
         <div className="form-container">
             <form className="form" onSubmit={(e) => handleLogin(e)}>

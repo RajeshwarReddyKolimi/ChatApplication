@@ -17,10 +17,7 @@ function App() {
                         <Route index element={<Register />} />
                         <Route path="/user/register" element={<Register />} />
                         <Route path="/user/login" element={<Login />} />
-                        <Route
-                            path="/user/dashboard/:userId"
-                            element={<Dashboard />}
-                        />
+                        <Route path="/user/dashboard" element={<Dashboard />} />
                     </Routes>
                 </BrowserRouter>
             </UserContext.Provider>
