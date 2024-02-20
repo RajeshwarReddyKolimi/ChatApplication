@@ -6,10 +6,9 @@ import notification1 from "../assets/notify2.mp3";
 import { io } from "socket.io-client";
 import Loader from "./Loader";
 import url from "../backendURL";
-function Chat({ receiver, user, showChat, setShowChat }) {
+function Chat({ receiver, user, showChat, setShowChat, socket, setSocket }) {
     const messageRef = useRef();
     const [conversation, setConversation] = useState([]);
-    const [socket, setSocket] = useState();
     const [loading, setLoading] = useState(false);
     const handleSendMessage = async (e) => {
         e.preventDefault();
@@ -62,21 +61,10 @@ function Chat({ receiver, user, showChat, setShowChat }) {
         fetchConversation();
         if (receiver) setShowChat(true);
     }, [receiver]);
-    useEffect(() => {
-        setConversation([]);
-        if (user?._id) {
-            const userId = user?._id;
-            const socket = io(url, {
-                query: {
-                    userId,
-                },
-            });
-            setSocket(socket);
-        }
-    }, [receiver]);
 
     useEffect(() => {
         socket?.on("message", ({ senderId, message }) => {
+            console.log(senderId, receiver?._id);
             if (senderId == receiver?._id?.toString()) {
                 const sound = new Audio(notification1);
                 sound.play();
@@ -95,7 +83,6 @@ function Chat({ receiver, user, showChat, setShowChat }) {
     useEffect(() => {
         window.addEventListener("popstate", (e) => {
             e.preventDefault();
-            console.log("Backed");
             setShowChat(false);
         });
 
@@ -108,7 +95,6 @@ function Chat({ receiver, user, showChat, setShowChat }) {
             lastMessageRef.current?.scrollIntoView();
         }, 100);
     }, [conversation]);
-    console.log(showChat);
     return (
         <div className="chat-space">
             <h1>{showChat}</h1>
@@ -121,7 +107,9 @@ function Chat({ receiver, user, showChat, setShowChat }) {
             </div>
             <div className="message-container" id="message-container">
                 {loading && <Loader />}
-                {conversation?.length === 0 && <div>Start Chat</div>}
+                {!loading && conversation?.length === 0 && (
+                    <div>Start Chat</div>
+                )}
                 {conversation?.map((conv) => (
                     <div
                         ref={lastMessageRef}

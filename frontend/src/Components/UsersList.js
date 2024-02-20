@@ -9,6 +9,7 @@ function UsersList({
     selectedUser,
     setSelectedUser,
     setShowChat,
+    onlineUsers,
 }) {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState([]);
@@ -39,23 +40,39 @@ function UsersList({
                 {users?.map((user, id) => (
                     <button
                         key={user?.username}
-                        className={
-                            selectedUser === user
-                                ? "selected-user users-list-item"
-                                : "users-list-item"
-                        }
+                        className={`
+                            ${
+                                selectedUser === user
+                                    ? "selected-user users-list-item"
+                                    : "users-list-item"
+                            }
+                            `}
                         onClick={() => {
                             setShowChat(true);
                             setSelectedUser(user);
                             setReceiver(user);
                         }}
                     >
-                        <img
-                            src={user.dp}
-                            alt="dp"
-                            className="profile-picture"
-                        />{" "}
-                        <div className="fullname">{user?.fullname}</div>
+                        <div
+                            className={`${
+                                onlineUsers.includes(user?._id) && "online-user"
+                            }`}
+                        >
+                            <img
+                                src={user.dp}
+                                alt="dp"
+                                className={`profile-picture ${
+                                    onlineUsers.includes(user?._id) &&
+                                    "online-user"
+                                }`}
+                            />
+                        </div>
+                        <div className="fullname">
+                            {user?.fullname}{" "}
+                            {onlineUsers.includes(user?._id)
+                                ? "Online"
+                                : "Offline"}
+                        </div>
                     </button>
                 ))}
             </div>
