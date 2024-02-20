@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import axios from "axios";
-import { MdSend } from "react-icons/md";
+import { MdSend, MdArrowBack } from "react-icons/md";
 import notification1 from "../assets/notify2.mp3";
 import { io } from "socket.io-client";
 import Loader from "./Loader";
 import url from "../backendURL";
-function Chat({ receiver, user }) {
+function Chat({ receiver, user, showChat, setShowChat }) {
     const messageRef = useRef();
     const [conversation, setConversation] = useState([]);
     const [socket, setSocket] = useState();
@@ -54,8 +54,13 @@ function Chat({ receiver, user }) {
         }
     };
 
+    const handleChatBack = () => {
+        setShowChat(false);
+    };
+
     useEffect(() => {
         fetchConversation();
+        if (receiver) setShowChat(true);
     }, [receiver]);
     useEffect(() => {
         setConversation([]);
@@ -87,15 +92,30 @@ function Chat({ receiver, user }) {
     }, [socket]);
 
     const lastMessageRef = useRef();
+    useEffect(() => {
+        window.addEventListener("popstate", (e) => {
+            e.preventDefault();
+            console.log("Backed");
+            setShowChat(false);
+        });
 
+        return () => {
+            window.removeEventListener("popstate", (e) => {});
+        };
+    }, []);
     useEffect(() => {
         setTimeout(() => {
             lastMessageRef.current?.scrollIntoView();
         }, 100);
     }, [conversation]);
+    console.log(showChat);
     return (
         <div className="chat-space">
+            <h1>{showChat}</h1>
             <div className="receiver">
+                <button className="chat-back-button" onClick={handleChatBack}>
+                    <MdArrowBack className="icon-1" />
+                </button>
                 <img className="receiver-image" src={receiver?.dp} alt="dp" />
                 <div className="receiver-name">{receiver?.fullname}</div>
             </div>
@@ -127,9 +147,10 @@ function Chat({ receiver, user }) {
                         className="message-input"
                         type="text"
                         ref={messageRef}
+                        placeholder="Message"
                     />
                     <button className="send-button" type="submit">
-                        <MdSend />
+                        <MdSend className="icon-1" />
                     </button>
                 </form>
             </div>
