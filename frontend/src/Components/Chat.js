@@ -2,11 +2,19 @@ import React, { useEffect, useRef, useState } from "react";
 
 import axios from "axios";
 import { MdSend, MdArrowBack } from "react-icons/md";
-import notification1 from "../assets/notify2.mp3";
+import notification from "../assets/notify.mp3";
 import { io } from "socket.io-client";
 import Loader from "./Loader";
 import url from "../backendURL";
-function Chat({ receiver, user, showChat, setShowChat, socket, setSocket }) {
+function Chat({
+    receiver,
+    setReceiver,
+    user,
+    showChat,
+    setShowChat,
+    socket,
+    setSocket,
+}) {
     const messageRef = useRef();
     const [conversation, setConversation] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -54,6 +62,7 @@ function Chat({ receiver, user, showChat, setShowChat, socket, setSocket }) {
     };
 
     const handleChatBack = () => {
+        setReceiver();
         setShowChat(false);
     };
 
@@ -62,11 +71,12 @@ function Chat({ receiver, user, showChat, setShowChat, socket, setSocket }) {
         if (receiver) setShowChat(true);
     }, [receiver]);
 
+    console.log("Receiver", receiver?._id);
     useEffect(() => {
         socket?.on("message", ({ senderId, message }) => {
             console.log(senderId, receiver?._id);
-            if (senderId == receiver?._id?.toString()) {
-                const sound = new Audio(notification1);
+            if (senderId === receiver?._id?.toString()) {
+                const sound = new Audio(notification);
                 sound.play();
                 setConversation((prev) => [
                     ...prev,
@@ -97,7 +107,6 @@ function Chat({ receiver, user, showChat, setShowChat, socket, setSocket }) {
     }, [conversation]);
     return (
         <div className="chat-space">
-            <h1>{showChat}</h1>
             <div className="receiver">
                 <button className="chat-back-button" onClick={handleChatBack}>
                     <MdArrowBack className="icon-1" />

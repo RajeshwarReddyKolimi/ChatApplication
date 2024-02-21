@@ -58,10 +58,18 @@ const login = async (req, res) => {
 const logout = async (req, res) => {
     try {
         res.cookie("token", "", { maxAge: 0 });
+        req.user = null;
         res.json({ message: "Logged out" });
     } catch (e) {
         console.error(e);
     }
 };
 
-module.exports = { register, login, logout };
+const getDetails = async (req, res) => {
+    try {
+        res.json(req.user);
+    } catch (e) {
+        console.error(e);
+    }
+};
+module.exports = { register, login, logout, getDetails };

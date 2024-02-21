@@ -3,16 +3,18 @@ import React, { useContext, useEffect, useState } from "react";
 import Chat from "./Chat";
 import Welcome from "./Welcome";
 import Settings from "./Settings";
-import { UserContext } from "../App";
+import { LoaderContext, UserContext } from "../App";
 import UsersList from "./UsersList";
 import { Navigate } from "react-router";
 import Header from "./Header";
 import SearchUser from "./SearchUser";
 import { io } from "socket.io-client";
 import url from "../backendURL";
+import Loader from "./Loader";
 
 export default function Dashboard() {
     const { user, setUser } = useContext(UserContext);
+    const { loading } = useContext(LoaderContext);
     const [receiver, setReceiver] = useState();
     const [userSearchInput, setUserSearchInput] = useState("");
     const [selectedUser, setSelectedUser] = useState();
@@ -37,7 +39,6 @@ export default function Dashboard() {
                 },
             });
             setSocket(socket);
-
             return () => socket.close();
         }
     }, [user]);
@@ -51,7 +52,8 @@ export default function Dashboard() {
             socket?.off("getOnlineUsers");
         };
     }, [socket]);
-    if (!user) return <Navigate to={`/user/login`} replace />;
+    if (loading) <Loader />;
+    else if (!user) return <Navigate to={`/user/login`} replace />;
     return (
         <div className="dashboard">
             {(showChat == false || screenSize) && (
@@ -61,9 +63,8 @@ export default function Dashboard() {
                     <UsersList
                         user={user}
                         setReceiver={setReceiver}
+                        receiver={receiver}
                         userSearchInput={userSearchInput}
-                        setSelectedUser={setSelectedUser}
-                        selectedUser={selectedUser}
                         setShowChat={setShowChat}
                         onlineUsers={onlineUsers}
                     />
@@ -75,6 +76,7 @@ export default function Dashboard() {
                         <Chat
                             user={user}
                             receiver={receiver}
+                            setReceiver={setReceiver}
                             showChat={showChat}
                             setShowChat={setShowChat}
                             socket={socket}

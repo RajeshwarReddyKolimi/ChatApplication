@@ -5,9 +5,8 @@ import Loader from "./Loader";
 
 function UsersList({
     userSearchInput,
+    receiver,
     setReceiver,
-    selectedUser,
-    setSelectedUser,
     setShowChat,
     onlineUsers,
 }) {
@@ -36,20 +35,20 @@ function UsersList({
         <div className="dashboard">
             <div className="users-list">
                 {loading && <Loader />}
-                {!loading && users.length === 0 && <div>No Users Found</div>}
+                {!loading && users?.length === 0 && <div>No Users Found</div>}
                 {users?.map((user, id) => (
                     <button
                         key={user?.username}
                         className={`
                             ${
-                                selectedUser === user
+                                receiver === user
                                     ? "selected-user users-list-item"
                                     : "users-list-item"
                             }
                             `}
                         onClick={() => {
+                            setReceiver();
                             setShowChat(true);
-                            setSelectedUser(user);
                             setReceiver(user);
                         }}
                     >
@@ -67,12 +66,7 @@ function UsersList({
                                 }`}
                             />
                         </div>
-                        <div className="fullname">
-                            {user?.fullname}{" "}
-                            {onlineUsers.includes(user?._id)
-                                ? "Online"
-                                : "Offline"}
-                        </div>
+                        <div className="fullname">{user?.fullname}</div>
                     </button>
                 ))}
             </div>

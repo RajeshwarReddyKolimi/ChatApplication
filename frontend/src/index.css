@@ -109,7 +109,7 @@ code {
 }
 .users-list-item {
     width: 100%;
-    border-radius: 2rem;
+    border-radius: 0 0.2rem 0.2rem 0;
     display: flex;
     flex-direction: row;
     padding: 0.5rem;
@@ -127,6 +127,7 @@ code {
 }
 .selected-user {
     background-color: rgb(255, 255, 255, 0.05);
+    border-left: 4px solid var(--border-color-light);
 }
 .profile-picture {
     width: 3rem;
@@ -141,11 +142,11 @@ code {
     content: "";
     position: absolute;
     z-index: 10;
-    top: 0.2rem;
-    right: 0.2rem;
+    top: 0;
+    right: 0;
     width: 0.75rem;
     height: 0.75rem;
-    background-color: green;
+    background-color: rgb(27, 209, 27);
     border-radius: 50%;
 }
 .chat-container {
@@ -184,12 +185,14 @@ code {
     overflow-wrap: break-word;
     text-wrap: balance;
     border-radius: 2rem;
-    background: rgb(8, 106, 134);
-    background: linear-gradient(
+
+    background-color: rgb(8, 106, 134);
+    /* background: rgb(8, 106, 134); */
+    /* background: linear-gradient(
         90deg,
         rgba(8, 106, 134, 1) 0%,
         rgba(233, 10, 142, 1) 100%
-    );
+    ); */
 }
 .received-message {
     justify-content: flex-start;
@@ -228,7 +231,8 @@ code {
     color: var(--text-color);
 }
 .send-button {
-    background-color: var(--button-color);
+    border: var(--border-light);
+    background-color: var(--input-background-color);
     color: white;
     padding: 0.6rem;
     /* width: 3rem; */
