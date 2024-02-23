@@ -30,7 +30,7 @@ function Login() {
             console.log(e);
         }
     };
-    if (user) return <Navigate to={`/user/dashboard`} replace />;
+    if (user) return <Navigate to={`/dashboard`} replace />;
     return (
         <div className="form-container">
             {loading ? (
@@ -93,7 +93,7 @@ function Login() {
                     </button>
                     <div className="login-info">
                         Don't have an Account?{" "}
-                        <Link to="/user/register">Register</Link>{" "}
+                        <Link to="/register">Register</Link>{" "}
                     </div>
                 </form>
             )}

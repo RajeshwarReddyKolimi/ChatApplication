@@ -1,15 +1,13 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import url from "../backendURL";
 import Loader from "./Loader";
+import { Link } from "react-router-dom";
+import { UserContext } from "../App";
+import User from "./User";
 
-function UsersList({
-    userSearchInput,
-    receiver,
-    setReceiver,
-    setShowChat,
-    onlineUsers,
-}) {
+function UsersList({ userSearchInput, receiverId, onlineUsers }) {
+    const { user: currentUser } = useContext(UserContext);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState([]);
     const fetchUsers = async () => {
@@ -27,7 +25,6 @@ function UsersList({
         }
         setLoading(false);
     };
-
     useEffect(() => {
         fetchUsers();
     }, [userSearchInput]);
@@ -35,39 +32,16 @@ function UsersList({
         <div className="dashboard">
             <div className="users-list">
                 {loading && <Loader />}
-                {!loading && users?.length === 0 && <div>No Users Found</div>}
-                {users?.map((user, id) => (
-                    <button
-                        key={user?.username}
-                        className={`
-                            ${
-                                receiver === user
-                                    ? "selected-user users-list-item"
-                                    : "users-list-item"
-                            }
-                            `}
-                        onClick={() => {
-                            setReceiver();
-                            setShowChat(true);
-                            setReceiver(user);
-                        }}
-                    >
-                        <div
-                            className={`${
-                                onlineUsers.includes(user?._id) && "online-user"
-                            }`}
-                        >
-                            <img
-                                src={user.dp}
-                                alt="dp"
-                                className={`profile-picture ${
-                                    onlineUsers.includes(user?._id) &&
-                                    "online-user"
-                                }`}
-                            />
-                        </div>
-                        <div className="fullname">{user?.fullname}</div>
-                    </button>
+                {users?.map((u, id) => (
+                    <User
+                        receiverId={receiverId}
+                        user={
+                            currentUser === u.participants[0]
+                                ? u.participants[0]
+                                : u.participants[1]
+                        }
+                        onlineUsers={onlineUsers}
+                    />
                 ))}
             </div>
         </div>

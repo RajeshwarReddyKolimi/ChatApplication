@@ -3,27 +3,26 @@ import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { MdSend, MdArrowBack } from "react-icons/md";
 import notification from "../assets/notify.mp3";
-import { io } from "socket.io-client";
 import Loader from "./Loader";
 import url from "../backendURL";
+import Welcome from "./Welcome";
 function Chat({
+    receiverId,
+    loading,
     receiver,
-    setReceiver,
-    user,
-    showChat,
-    setShowChat,
+    conversation,
+    setConversation,
     socket,
-    setSocket,
 }) {
     const messageRef = useRef();
-    const [conversation, setConversation] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const receiverIdRef = useRef(receiverId);
+
     const handleSendMessage = async (e) => {
         e.preventDefault();
         const message = messageRef.current.value;
         messageRef.current.value = "";
         try {
-            const endpoint = `${url}/api/messages/${receiver?._id}`;
+            const endpoint = `${url}/api/messages/${receiverId}`;
             const res = await axios.post(
                 `${endpoint}`,
                 { message },
@@ -35,48 +34,17 @@ function Chat({
         } catch (e) {
             console.error(e);
         }
-        setLoading(false);
     };
-
-    const fetchConversation = async () => {
-        try {
-            setLoading(true);
-            setConversation([]);
-            const endpoint = `${url}/api/messages/${receiver?._id}`;
-            const res = await axios.get(`${endpoint}`, {
-                withCredentials: true,
-            });
-            let data = await res.data;
-            const messages = [];
-            for (let i = 0; i < data.length; i++) {
-                messages.push({
-                    sent: receiver?._id === data[i]?.receiverId,
-                    message: data[i]?.message,
-                });
-            }
-            setLoading(false);
-            setConversation(messages);
-        } catch (e) {
-            setLoading(false);
-            console.error(e);
-        }
-    };
-
-    const handleChatBack = () => {
-        setReceiver();
-        setShowChat(false);
-    };
+    console.log("ReceiverId", receiverId);
 
     useEffect(() => {
-        fetchConversation();
-        if (receiver) setShowChat(true);
-    }, [receiver]);
-
-    console.log("Receiver", receiver?._id);
+        receiverIdRef.current = receiverId;
+    }, [receiverId]);
     useEffect(() => {
         socket?.on("message", ({ senderId, message }) => {
-            console.log(senderId, receiver?._id);
-            if (senderId === receiver?._id?.toString()) {
+            const currentReceiverId = receiverIdRef.current;
+            console.log(senderId, currentReceiverId);
+            if (senderId == currentReceiverId) {
                 const sound = new Audio(notification);
                 sound.play();
                 setConversation((prev) => [
@@ -91,16 +59,7 @@ function Chat({
     }, [socket]);
 
     const lastMessageRef = useRef();
-    useEffect(() => {
-        window.addEventListener("popstate", (e) => {
-            e.preventDefault();
-            setShowChat(false);
-        });
 
-        return () => {
-            window.removeEventListener("popstate", (e) => {});
-        };
-    }, []);
     useEffect(() => {
         setTimeout(() => {
             lastMessageRef.current?.scrollIntoView();
@@ -109,19 +68,17 @@ function Chat({
     return (
         <div className="chat-space">
             <div className="receiver">
-                <button className="chat-back-button" onClick={handleChatBack}>
-                    <MdArrowBack className="icon-1" />
-                </button>
                 <img className="receiver-image" src={receiver?.dp} alt="dp" />
                 <div className="receiver-name">{receiver?.fullname}</div>
             </div>
             <div className="message-container" id="message-container">
                 {loading && <Loader />}
                 {!loading && conversation?.length === 0 && (
-                    <div>Start Chat</div>
+                    <Welcome msg="Say Hello!" />
                 )}
                 {conversation?.map((conv) => (
                     <div
+                        key={conv?._id}
                         ref={lastMessageRef}
                         className={`message
                                 ${

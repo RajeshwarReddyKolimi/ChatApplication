@@ -1,6 +1,6 @@
 import React from "react";
 
-function Welcome() {
+function Welcome({ msg }) {
     const welcomeContainer = {
         width: "100%",
         height: "100vh",
@@ -10,7 +10,7 @@ function Welcome() {
     };
     return (
         <div className="welcome-container" style={welcomeContainer}>
-            <h3 className="welcome-message">Hello!</h3>
+            <h3 className="welcome-message">{msg ? msg : "Hello!"}</h3>
         </div>
     );
 }

@@ -33,7 +33,7 @@ function Register() {
             console.log(e);
         }
     };
-    if (user) return <Navigate to={`/user/dashboard`} replace />;
+    if (user) return <Navigate to={`/dashboard`} replace />;
     return (
         <div className="form-container">
             {loading ? (
@@ -136,8 +136,7 @@ function Register() {
                         Signup
                     </button>
                     <div className="login-info">
-                        Already have an Account?{" "}
-                        <Link to="/user/login">Login</Link>{" "}
+                        Already have an Account? <Link to="/login">Login</Link>{" "}
                     </div>
                 </form>
             )}

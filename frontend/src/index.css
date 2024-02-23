@@ -39,6 +39,7 @@ button {
 }
 a {
     color: var(--text-color);
+    text-decoration: none;
 }
 option {
     background-color: var(--theme-color);
@@ -64,7 +65,10 @@ code {
 
 .dashboard {
     display: flex;
-    width: 100%;
+    flex-direction: row;
+    width: 100vw;
+    overflow: hidden;
+    justify-content: safe;
 }
 
 .side-bar {
@@ -72,7 +76,6 @@ code {
     height: 100vh;
     display: flex;
     flex-direction: column;
-
     border-right: var(--border-light);
 }
 .header {
@@ -105,29 +108,29 @@ code {
     flex-wrap: nowrap;
     overflow-y: auto;
     gap: 0.5rem;
-    /* padding: 0.5rem; */
 }
 .users-list-item {
     width: 100%;
     border-radius: 0 0.2rem 0.2rem 0;
     display: flex;
     flex-direction: row;
-    padding: 0.5rem 1rem;
     align-items: center;
     gap: 1rem;
     color: var(--text-color);
     text-align: left;
+    padding: 0.25rem 0.5rem;
 }
 
 .fullname {
-    width: 100%;
+    /* width: 220px; */
     overflow-x: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
 .selected-user {
     background-color: rgb(255, 255, 255, 0.05);
-    border-left: 4px solid var(--border-color-light);
+    border-left: 3px solid white;
+    /* var(--border-color-light); */
 }
 .profile-picture {
     width: 3rem;
@@ -149,12 +152,10 @@ code {
     background-color: rgb(27, 209, 27);
     border-radius: 50%;
 }
-.chat-container {
-    flex: 1;
-    width: 50%;
-}
+
 .chat-space {
-    width: 100%;
+    width: calc(100vh - 300px);
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
 }
@@ -301,6 +302,9 @@ code {
     .side-bar {
         /* display: none; */
         width: 100vw;
+    }
+    .hide-side-bar {
+        display: none;
     }
     .chat-back-button {
         display: block;

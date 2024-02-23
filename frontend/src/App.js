@@ -7,6 +7,7 @@ import Register from "./Components/Register";
 import Login from "./Components/Login";
 import axios from "axios";
 import url from "./backendURL";
+import ChatDashboard from "./Components/ChatDashboard";
 
 export const UserContext = createContext();
 export const LoaderContext = createContext();
@@ -30,7 +31,6 @@ function App() {
         }
         setLoading(false);
     };
-    console.log(loading);
     useEffect(() => {
         fetchUser();
     }, []);
@@ -41,14 +41,15 @@ function App() {
                     <BrowserRouter>
                         <Routes>
                             <Route index element={<Register />} />
+                            <Route path="/register" element={<Register />} />
+                            <Route path="/login" element={<Login />} />
                             <Route
-                                path="/user/register"
-                                element={<Register />}
+                                path="/dashboard"
+                                element={<ChatDashboard />}
                             />
-                            <Route path="/user/login" element={<Login />} />
                             <Route
-                                path="/user/dashboard"
-                                element={<Dashboard />}
+                                path="/chat/:id"
+                                element={<ChatDashboard />}
                             />
                         </Routes>
                     </BrowserRouter>
