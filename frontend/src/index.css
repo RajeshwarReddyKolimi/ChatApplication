@@ -105,14 +105,14 @@ code {
     flex-wrap: nowrap;
     overflow-y: auto;
     gap: 0.5rem;
-    padding: 0.5rem;
+    /* padding: 0.5rem; */
 }
 .users-list-item {
     width: 100%;
     border-radius: 0 0.2rem 0.2rem 0;
     display: flex;
     flex-direction: row;
-    padding: 0.5rem;
+    padding: 0.5rem 1rem;
     align-items: center;
     gap: 1rem;
     color: var(--text-color);
@@ -170,6 +170,12 @@ code {
     overflow-y: auto;
     gap: 0.5rem;
     padding: 0.5rem;
+    background: rgb(2, 11, 19);
+    background: linear-gradient(
+        90deg,
+        rgba(2, 11, 19, 1) 0%,
+        rgba(15, 31, 46, 1) 100%
+    );
 }
 
 .message {

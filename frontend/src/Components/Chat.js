@@ -41,6 +41,7 @@ function Chat({
     const fetchConversation = async () => {
         try {
             setLoading(true);
+            setConversation([]);
             const endpoint = `${url}/api/messages/${receiver?._id}`;
             const res = await axios.get(`${endpoint}`, {
                 withCredentials: true,
