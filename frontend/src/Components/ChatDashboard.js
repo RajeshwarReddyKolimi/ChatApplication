@@ -1,5 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
-import Dashboard from "./Dashboard";
+import React, {
+    createContext,
+    useContext,
+    useEffect,
+    useRef,
+    useState,
+} from "react";
 import Chat from "./Chat";
 import { useParams } from "react-router";
 import url from "../backendURL";
@@ -7,7 +12,13 @@ import axios from "axios";
 import SideBar from "./Sidebar";
 import { UserContext } from "../App";
 import { io } from "socket.io-client";
+import notification2 from "../assets/notify2.mp3";
 
+export const SocketContext = createContext();
+export const AllUsersContext = createContext();
+export const SearchUsersContext = createContext();
+export const OnlineUserContext = createContext();
+export const ReceiverContext = createContext();
 function ChatDashboard() {
     const { user } = useContext(UserContext);
     const { id: receiverId } = useParams();
@@ -15,10 +26,19 @@ function ChatDashboard() {
     const [socket, setSocket] = useState();
     const [onlineUsers, setOnlineUsers] = useState();
     const [conversation, setConversation] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [chatLoading, setChatLoading] = useState(false);
+    const [searchUsers, setSearchUsers] = useState([]);
+    const [showSearchResult, setShowSearchResult] = useState(false);
+    const [users, setUsers] = useState([]);
+    const [userLoading, setUserLoading] = useState([]);
+    const receiverIdRef = useRef(receiverId);
+
+    useEffect(() => {
+        receiverIdRef.current = receiverId;
+    }, [receiverId]);
     const fetchReceiverDetails = async () => {
         try {
-            setLoading(true);
+            setChatLoading(true);
             const endpoint = `${url}/api/users/${receiverId}`;
             const res = await axios.get(`${endpoint}`, {
                 withCredentials: true,
@@ -28,7 +48,7 @@ function ChatDashboard() {
         } catch (e) {
             console.error(e);
         }
-        setLoading(false);
+        setChatLoading(false);
     };
     const fetchConversation = async () => {
         try {
@@ -50,6 +70,20 @@ function ChatDashboard() {
             console.error(e);
         }
     };
+    const fetchUsers = async () => {
+        try {
+            setUserLoading(true);
+            const endpoint = `${url}/api/users`;
+            const res = await axios.get(`${endpoint}`, {
+                withCredentials: true,
+            });
+            let data = await res.data;
+            if (data) setUsers(data);
+        } catch (e) {
+            console.error(e);
+        }
+        setUserLoading(false);
+    };
     useEffect(() => {
         if (receiverId) {
             fetchReceiverDetails();
@@ -69,30 +103,65 @@ function ChatDashboard() {
         }
     }, [user]);
     useEffect(() => {
+        fetchUsers();
+    }, []);
+    useEffect(() => {
         socket?.on("getOnlineUsers", (users) => {
             setOnlineUsers(users);
         });
-
+        socket?.on("message", ({ senderId, message }) => {
+            const currentReceiverId = receiverIdRef.current;
+            console.log(senderId, currentReceiverId);
+            if (senderId != currentReceiverId) {
+                const sound = new Audio(notification2);
+                sound.play();
+                fetchUsers();
+            }
+        });
         return () => {
             socket?.off("getOnlineUsers");
+            socket?.off("message");
         };
     }, [socket]);
     return (
-        <div className="dashboard">
-            <div className={receiverId && `hide-side-bar`}>
-                <SideBar receiverId={receiverId} onlineUsers={onlineUsers} />
-            </div>
-            {receiverId && (
-                <Chat
-                    conversation={conversation}
-                    receiver={receiver}
-                    receiverId={receiverId}
-                    setConversation={setConversation}
-                    loading={loading}
-                    socket={socket}
-                />
-            )}
-        </div>
+        <SocketContext.Provider value={{ socket }}>
+            <AllUsersContext.Provider value={{ users, setUsers }}>
+                <SearchUsersContext.Provider
+                    value={{ searchUsers, setSearchUsers }}
+                >
+                    <OnlineUserContext.Provider value={{ onlineUsers }}>
+                        <ReceiverContext.Provider
+                            value={{ receiver, setReceiver }}
+                        >
+                            <div className="dashboard">
+                                <div className={receiverId && `hide-side-bar`}>
+                                    <SideBar
+                                        loading={userLoading}
+                                        showSearchResult={showSearchResult}
+                                        setShowSearchResult={
+                                            setShowSearchResult
+                                        }
+                                        searchUsers={searchUsers}
+                                        setSearchUsers={setSearchUsers}
+                                    />
+                                </div>
+                                {receiverId && (
+                                    <Chat
+                                        conversation={conversation}
+                                        setConversation={setConversation}
+                                        loading={chatLoading}
+                                        showSearchResult={showSearchResult}
+                                        setShowSearchResult={
+                                            setShowSearchResult
+                                        }
+                                    />
+                                )}
+                            </div>
+                        </ReceiverContext.Provider>
+                    </OnlineUserContext.Provider>
+                </SearchUsersContext.Provider>
+            </AllUsersContext.Provider>
+        </SocketContext.Provider>
     );
 }
 

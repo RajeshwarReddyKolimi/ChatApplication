@@ -1,25 +1,25 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 
 import axios from "axios";
 import { MdSend, MdArrowBack } from "react-icons/md";
-import notification from "../assets/notify.mp3";
+import notification1 from "../assets/notify.mp3";
 import Loader from "./Loader";
 import url from "../backendURL";
 import Welcome from "./Welcome";
-function Chat({
-    receiverId,
-    loading,
-    receiver,
-    conversation,
-    setConversation,
-    socket,
-}) {
+import { ReceiverContext, SocketContext } from "./ChatDashboard";
+function Chat({ loading, conversation, setConversation }) {
+    const { socket } = useContext(SocketContext);
+    const { receiver } = useContext(ReceiverContext);
+    const [receiverId, setReceiverId] = useState(receiver?._id);
     const messageRef = useRef();
     const receiverIdRef = useRef(receiverId);
 
     const handleSendMessage = async (e) => {
         e.preventDefault();
         const message = messageRef.current.value;
+        console.log("Message", message);
+        console.log("Receiver", receiver);
+        console.log("ReceiverId", receiverId);
         messageRef.current.value = "";
         try {
             const endpoint = `${url}/api/messages/${receiverId}`;
@@ -35,17 +35,15 @@ function Chat({
             console.error(e);
         }
     };
-    console.log("ReceiverId", receiverId);
 
     useEffect(() => {
-        receiverIdRef.current = receiverId;
-    }, [receiverId]);
+        receiverIdRef.current = receiver?._id;
+    }, [receiver]);
     useEffect(() => {
         socket?.on("message", ({ senderId, message }) => {
             const currentReceiverId = receiverIdRef.current;
-            console.log(senderId, currentReceiverId);
             if (senderId == currentReceiverId) {
-                const sound = new Audio(notification);
+                const sound = new Audio(notification1);
                 sound.play();
                 setConversation((prev) => [
                     ...prev,

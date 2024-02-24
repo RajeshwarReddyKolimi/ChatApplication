@@ -5,6 +5,29 @@ const Conversation = require("../models/conversationModel");
 
 const getAllUsers = async (req, res) => {
     try {
+        const user = req.user;
+        const userId = user?._id;
+        const conversation = await Conversation.find(
+            {
+                participants: { $in: [userId] },
+            },
+            { _id: 0, participants: 1 }
+        )
+            .sort({ updatedAt: -1 })
+            .populate("participants");
+        const contacts = conversation.map((c) =>
+            c.participants[0]._id.toString() === userId.toString()
+                ? c.participants[1]
+                : c.participants[0]
+        );
+        res.json(contacts);
+    } catch (e) {
+        console.error(e);
+    }
+};
+
+const getSearchUser = async (req, res) => {
+    try {
         const { q } = req.query;
         const user = req.user;
         const userId = user?._id;
@@ -12,18 +35,12 @@ const getAllUsers = async (req, res) => {
             fullname: new RegExp(q, "i"),
             _id: { $ne: userId },
         });
-
-        const conversation = await Conversation.find({
-            participants: { $in: [userId] },
-        })
-            .sort({ updatedAt: 1 })
-            .populate("participants")
-            .populate("messages");
-        res.json(conversation);
+        res.json(users);
     } catch (e) {
         console.error(e);
     }
 };
+
 const getAUser = async (req, res) => {
     try {
         const { id } = req.params;
@@ -36,4 +53,4 @@ const getAUser = async (req, res) => {
     }
 };
 
-module.exports = { getAllUsers, getAUser };
+module.exports = { getAllUsers, getAUser, getSearchUser };

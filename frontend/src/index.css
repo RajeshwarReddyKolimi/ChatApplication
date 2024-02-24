@@ -89,6 +89,10 @@ code {
 .search-user-container {
     height: 3rem;
     padding: 0.5rem;
+    position: relative;
+}
+.search-user-form {
+    position: relative;
 }
 .search-user-input {
     background-color: var(--input-background-color);
@@ -100,13 +104,35 @@ code {
     width: 100%;
     color: var(--text-color);
 }
+.search-user-result {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    /* height: calc(100vh - 7rem);
+    overflow: auto;
+    background-color: var(--theme-color); */
+    z-index: 10;
+}
+.hide-search-result-button {
+    cursor: pointer;
+    padding: 0.25rem;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .users-list {
     height: calc(100vh - 6rem);
     width: 100%;
     display: flex;
     flex-direction: column;
-    flex-wrap: nowrap;
     overflow-y: auto;
+    overflow-x: hidden;
     gap: 0.5rem;
 }
 .users-list-item {
@@ -118,11 +144,10 @@ code {
     gap: 1rem;
     color: var(--text-color);
     text-align: left;
-    padding: 0.25rem 0.5rem;
+    padding: 0.5rem 1rem;
 }
 
 .fullname {
-    /* width: 220px; */
     overflow-x: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -144,7 +169,7 @@ code {
 .online-user::after {
     content: "";
     position: absolute;
-    z-index: 10;
+    z-index: 1;
     top: 0;
     right: 0;
     width: 0.75rem;
