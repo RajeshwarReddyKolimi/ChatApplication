@@ -23,7 +23,6 @@ export default function SearchUser({ showSearchResult, setShowSearchResult }) {
             console.error(e);
         }
     };
-    console.log("searchUsers", searchUsers);
     const handleFocus = () => {
         setShowSearchResult(true);
         setShowHideButton(true);

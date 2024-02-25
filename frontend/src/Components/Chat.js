@@ -10,19 +10,16 @@ import { ReceiverContext, SocketContext } from "./ChatDashboard";
 function Chat({ loading, conversation, setConversation }) {
     const { socket } = useContext(SocketContext);
     const { receiver } = useContext(ReceiverContext);
-    const [receiverId, setReceiverId] = useState(receiver?._id);
     const messageRef = useRef();
-    const receiverIdRef = useRef(receiverId);
+    const receiverIdRef = useRef(receiver?._id);
 
     const handleSendMessage = async (e) => {
         e.preventDefault();
         const message = messageRef.current.value;
-        console.log("Message", message);
-        console.log("Receiver", receiver);
-        console.log("ReceiverId", receiverId);
         messageRef.current.value = "";
         try {
-            const endpoint = `${url}/api/messages/${receiverId}`;
+            if (!receiver?._id) return;
+            const endpoint = `${url}/api/messages/${receiver?._id}`;
             const res = await axios.post(
                 `${endpoint}`,
                 { message },

@@ -9,7 +9,7 @@ export default function User({ user }) {
         <Link
             to={`/chat/${user?._id}`}
             replace={receiver?._id ? true : false}
-            key={user?.username}
+            key={user?.fullname}
             className={`${
                 receiver?._id == user?._id.toString()
                     ? "selected-user users-list-item"

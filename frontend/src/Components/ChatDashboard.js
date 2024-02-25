@@ -103,8 +103,15 @@ function ChatDashboard() {
         }
     }, [user]);
     useEffect(() => {
+        Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+                console.log("Notification permission granted");
+            }
+        });
         fetchUsers();
     }, []);
+    const sound = new Audio(notification2);
+    console.log("sound", sound.readyState, HTMLMediaElement.HAVE_ENOUGH_DATA);
     useEffect(() => {
         socket?.on("getOnlineUsers", (users) => {
             setOnlineUsers(users);
@@ -112,8 +119,13 @@ function ChatDashboard() {
         socket?.on("message", ({ senderId, message }) => {
             const currentReceiverId = receiverIdRef.current;
             console.log(senderId, currentReceiverId);
+
+            let notification = new Notification("New Message", {
+                body: message,
+            });
             if (senderId != currentReceiverId) {
                 const sound = new Audio(notification2);
+                console.log(sound.readyState);
                 sound.play();
                 fetchUsers();
             }

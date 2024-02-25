@@ -11,8 +11,8 @@ function UsersList({ loading, showSearchResult }) {
         <div className="users-list">
             {loading && <Loader />}
             {showSearchResult
-                ? searchUsers?.map((u, id) => <User user={u} />)
-                : users?.map((u, id) => <User user={u} />)}
+                ? searchUsers?.map((u, id) => <User user={u} key={u._id} />)
+                : users?.map((u, id) => <User user={u} key={u._id} />)}
         </div>
     );
 }
