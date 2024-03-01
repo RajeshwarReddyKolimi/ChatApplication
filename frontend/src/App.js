@@ -23,7 +23,6 @@ function App() {
             if (data) setUser(data);
         } catch (e) {}
     };
-    console.log(user);
     useEffect(() => {
         fetchUser();
     }, []);

@@ -42,7 +42,6 @@ function Login() {
         } catch (e) {}
         setLoading(false);
     };
-    console.log(error);
     if (user) return <Navigate to={`/dashboard`} replace />;
     return (
         <div className="form-container">

@@ -31,7 +31,7 @@ function Dashboard() {
     const [searchUsers, setSearchUsers] = useState([]);
     const [showSearchResult, setShowSearchResult] = useState(false);
     const [users, setUsers] = useState([]);
-    const [usersLoading, setUsersLoading] = useState([]);
+    const [usersLoading, setUsersLoading] = useState(false);
     const receiverIdRef = useRef(receiverId);
 
     useEffect(() => {
@@ -77,6 +77,7 @@ function Dashboard() {
     };
     const fetchUsers = async () => {
         try {
+            // setUsersLoading(true);
             const endpoint = `${url}/api/users`;
             const res = await axios.get(`${endpoint}`, {
                 withCredentials: true,
