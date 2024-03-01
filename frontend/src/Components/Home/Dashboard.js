@@ -5,21 +5,22 @@ import React, {
     useRef,
     useState,
 } from "react";
-import Chat from "./Chat";
+import Chat from "../Chats/Chat";
 import { useParams } from "react-router";
-import url from "../backendURL";
+import url from "../../backendURL";
 import axios from "axios";
 import SideBar from "./Sidebar";
-import { UserContext } from "../App";
+import { UserContext } from "../../App";
 import { io } from "socket.io-client";
-import notification2 from "../assets/notify2.mp3";
+import { formatDate } from "../../HelperFunctions/formatDate";
+import Welcome from "../Utils/Welcome";
 
 export const SocketContext = createContext();
 export const AllUsersContext = createContext();
 export const SearchUsersContext = createContext();
 export const OnlineUserContext = createContext();
 export const ReceiverContext = createContext();
-function ChatDashboard() {
+function Dashboard() {
     const { user } = useContext(UserContext);
     const { id: receiverId } = useParams();
     const [receiver, setReceiver] = useState([]);
@@ -30,12 +31,13 @@ function ChatDashboard() {
     const [searchUsers, setSearchUsers] = useState([]);
     const [showSearchResult, setShowSearchResult] = useState(false);
     const [users, setUsers] = useState([]);
-    const [userLoading, setUserLoading] = useState([]);
+    const [usersLoading, setUsersLoading] = useState([]);
     const receiverIdRef = useRef(receiverId);
 
     useEffect(() => {
         receiverIdRef.current = receiverId;
     }, [receiverId]);
+
     const fetchReceiverDetails = async () => {
         try {
             setChatLoading(true);
@@ -53,6 +55,7 @@ function ChatDashboard() {
     const fetchConversation = async () => {
         try {
             setConversation([]);
+            setChatLoading(true);
             const endpoint = `${url}/api/messages/${receiverId}`;
             const res = await axios.get(`${endpoint}`, {
                 withCredentials: true,
@@ -63,16 +66,17 @@ function ChatDashboard() {
                 messages.push({
                     sent: receiverId === data[i]?.receiverId,
                     message: data[i]?.message,
+                    time: formatDate(data[i]?.createdAt),
                 });
             }
             setConversation(messages);
         } catch (e) {
             console.error(e);
         }
+        setChatLoading(false);
     };
     const fetchUsers = async () => {
         try {
-            setUserLoading(true);
             const endpoint = `${url}/api/users`;
             const res = await axios.get(`${endpoint}`, {
                 withCredentials: true,
@@ -82,8 +86,11 @@ function ChatDashboard() {
         } catch (e) {
             console.error(e);
         }
-        setUserLoading(false);
+        setUsersLoading(false);
     };
+    useEffect(() => {
+        fetchUsers();
+    }, []);
     useEffect(() => {
         if (receiverId) {
             fetchReceiverDetails();
@@ -103,36 +110,16 @@ function ChatDashboard() {
         }
     }, [user]);
     useEffect(() => {
-        Notification.requestPermission().then((permission) => {
-            if (permission === "granted") {
-                console.log("Notification permission granted");
-            }
-        });
-        fetchUsers();
-    }, []);
-    const sound = new Audio(notification2);
-    console.log("sound", sound.readyState, HTMLMediaElement.HAVE_ENOUGH_DATA);
-    useEffect(() => {
         socket?.on("getOnlineUsers", (users) => {
             setOnlineUsers(users);
         });
-        socket?.on("message", ({ senderId, message }) => {
-            const currentReceiverId = receiverIdRef.current;
-            console.log(senderId, currentReceiverId);
-
-            let notification = new Notification("New Message", {
-                body: message,
-            });
-            if (senderId != currentReceiverId) {
-                const sound = new Audio(notification2);
-                console.log(sound.readyState);
-                sound.play();
-                fetchUsers();
-            }
+        socket?.on("newMessage", () => {
+            fetchUsers();
         });
         return () => {
             socket?.off("getOnlineUsers");
             socket?.off("message");
+            socket?.off("newMessage");
         };
     }, [socket]);
     return (
@@ -148,7 +135,7 @@ function ChatDashboard() {
                             <div className="dashboard">
                                 <div className={receiverId && `hide-side-bar`}>
                                     <SideBar
-                                        loading={userLoading}
+                                        usersLoading={usersLoading}
                                         showSearchResult={showSearchResult}
                                         setShowSearchResult={
                                             setShowSearchResult
@@ -157,15 +144,19 @@ function ChatDashboard() {
                                         setSearchUsers={setSearchUsers}
                                     />
                                 </div>
-                                {receiverId && (
+                                {receiverId ? (
                                     <Chat
                                         conversation={conversation}
                                         setConversation={setConversation}
-                                        loading={chatLoading}
+                                        chatLoading={chatLoading}
                                         showSearchResult={showSearchResult}
                                         setShowSearchResult={
                                             setShowSearchResult
                                         }
+                                    />
+                                ) : (
+                                    <Welcome
+                                        msg={`Hello ${user && user.fullname}`}
                                     />
                                 )}
                             </div>
@@ -177,4 +168,4 @@ function ChatDashboard() {
     );
 }
 
-export default ChatDashboard;
+export default Dashboard;

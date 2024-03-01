@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
-import { LoaderContext, UserContext } from "../App";
+import { LoaderContext, UserContext } from "../../App";
 import { BiLogOut } from "react-icons/bi";
-import url from "../backendURL";
+import url from "../../backendURL";
 import axios from "axios";
 
 function Header() {

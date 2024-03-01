@@ -32,9 +32,13 @@ const getSearchUser = async (req, res) => {
         const user = req.user;
         const userId = user?._id;
         const users = await User.find({
-            fullname: new RegExp(q, "i"),
+            $or: [
+                { fullname: new RegExp(q, "i") },
+                { username: new RegExp(q, "i") },
+            ],
             _id: { $ne: userId },
         });
+
         res.json(users);
     } catch (e) {
         console.error(e);

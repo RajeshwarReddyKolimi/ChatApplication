@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import url from "../backendURL";
+import url from "../../backendURL";
 import axios from "axios";
 import { MdClose } from "react-icons/md";
-import { UserContext } from "../App";
-import { SearchUsersContext } from "./ChatDashboard";
+import { UserContext } from "../../App";
+import { SearchUsersContext } from "../Home/Dashboard";
 
 export default function SearchUser({ showSearchResult, setShowSearchResult }) {
     const { user } = useContext(UserContext);

@@ -146,8 +146,18 @@ code {
     text-align: left;
     padding: 0.5rem 1rem;
 }
-
+.user-details {
+    display: flex;
+    flex-direction: column;
+}
+.username {
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 0.8rem;
+}
 .fullname {
+    font-weight: 500;
     overflow-x: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -194,6 +204,7 @@ code {
     width: 100%;
     height: calc(100vh - 7.5rem);
     overflow-y: auto;
+    overflow-x: hidden;
     gap: 0.5rem;
     padding: 0.5rem;
     background: rgb(2, 11, 19);
@@ -209,28 +220,45 @@ code {
     display: flex;
     flex-direction: row;
 }
-.message-text {
-    padding: 0.5rem 1rem;
+.message-item {
+    display: flex;
+    /* flex-wrap: wrap; */
+    flex-direction: row;
     max-width: 90%;
+    background-color: rgb(8, 106, 134);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    gap: 0.5rem;
+}
+.message-text {
+    width: auto;
+    flex-grow: 1;
     text-align: left;
     color: white;
     overflow-wrap: break-word;
     text-wrap: balance;
-    border-radius: 2rem;
-
-    background-color: rgb(8, 106, 134);
-    /* background: rgb(8, 106, 134); */
-    /* background: linear-gradient(
-        90deg,
-        rgba(8, 106, 134, 1) 0%,
-        rgba(233, 10, 142, 1) 100%
-    ); */
 }
 .received-message {
     justify-content: flex-start;
 }
+.received-message > .message-item {
+    align-items: end;
+}
+
 .sent-message {
     justify-content: flex-end;
+}
+.sent-message > .message-item {
+    align-items: end;
+}
+.message-time {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.6rem;
+    text-wrap: nowrap;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    /* text-align: right; */
 }
 .message-form-container {
     height: 3.5rem;
@@ -274,6 +302,9 @@ code {
     justify-content: center;
     align-items: center;
     border-radius: 0.2rem;
+}
+.send-button:hover {
+    background-color: rgba(255, 255, 255, 0.15);
 }
 .receiver {
     display: flex;

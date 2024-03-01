@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-import { OnlineUserContext, ReceiverContext } from "./ChatDashboard";
+import { OnlineUserContext, ReceiverContext } from "../Home/Dashboard";
 
 export default function User({ user }) {
     const { receiver } = useContext(ReceiverContext);
@@ -29,8 +29,10 @@ export default function User({ user }) {
                     }`}
                 />
             </div>
-
-            <div className="fullname">{user?.username}</div>
+            <div className="user-details">
+                <div className="fullname">{user?.fullname}</div>
+                <div className="username">@{user?.username}</div>
+            </div>
         </Link>
     );
 }

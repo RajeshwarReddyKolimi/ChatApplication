@@ -2,17 +2,21 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 
 import axios from "axios";
 import { MdSend, MdArrowBack } from "react-icons/md";
-import notification1 from "../assets/notify.mp3";
-import Loader from "./Loader";
+import notification1 from "./notify.mp3";
+import Loader from "../Components/Utils/Loader";
 import url from "../backendURL";
-import Welcome from "./Welcome";
-import { ReceiverContext, SocketContext } from "./ChatDashboard";
+import Welcome from "../Components/Utils/Welcome";
+import { ReceiverContext, SocketContext } from "../Components/Home/Dashboard";
+import Messages from "../Components/Chats/Messages";
+import { formatDate } from "../Components/formatDate";
 function Chat({ loading, conversation, setConversation }) {
     const { socket } = useContext(SocketContext);
     const { receiver } = useContext(ReceiverContext);
     const messageRef = useRef();
     const receiverIdRef = useRef(receiver?._id);
-
+    const handleBack = () => {
+        window.history.back();
+    };
     const handleSendMessage = async (e) => {
         e.preventDefault();
         const message = messageRef.current.value;
@@ -27,7 +31,10 @@ function Chat({ loading, conversation, setConversation }) {
                     withCredentials: true,
                 }
             );
-            setConversation((prev) => [...prev, { sent: true, message }]);
+            setConversation((prev) => [
+                ...prev,
+                { sent: true, message, time: formatDate(new Date()) },
+            ]);
         } catch (e) {
             console.error(e);
         }
@@ -44,7 +51,11 @@ function Chat({ loading, conversation, setConversation }) {
                 sound.play();
                 setConversation((prev) => [
                     ...prev,
-                    { sent: false, message: message },
+                    {
+                        sent: false,
+                        message: message,
+                        time: formatDate(new Date()),
+                    },
                 ]);
             }
         });
@@ -53,41 +64,17 @@ function Chat({ loading, conversation, setConversation }) {
         };
     }, [socket]);
 
-    const lastMessageRef = useRef();
-
-    useEffect(() => {
-        setTimeout(() => {
-            lastMessageRef.current?.scrollIntoView();
-        }, 100);
-    }, [conversation]);
     return (
         <div className="chat-space">
             <div className="receiver">
+                <button onClick={handleBack}>
+                    <MdArrowBack className="icon-1" />
+                </button>
                 <img className="receiver-image" src={receiver?.dp} alt="dp" />
                 <div className="receiver-name">{receiver?.fullname}</div>
             </div>
-            <div className="message-container" id="message-container">
-                {loading && <Loader />}
-                {!loading && conversation?.length === 0 && (
-                    <Welcome msg="Say Hello!" />
-                )}
-                {conversation?.map((conv) => (
-                    <div
-                        key={conv?._id}
-                        ref={lastMessageRef}
-                        className={`message
-                                ${
-                                    conv?.sent
-                                        ? "sent-message"
-                                        : "received-message"
-                                }`}
-                    >
-                        <div className="message-text">
-                            {conv?.sent} {conv.message}
-                        </div>
-                    </div>
-                ))}
-            </div>
+            <Messages conversation={conversation} loading={loading} />
+
             <div className="message-form-container">
                 <form
                     className="message-form"

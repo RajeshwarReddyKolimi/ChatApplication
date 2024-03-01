@@ -31,9 +31,16 @@
     background-color: rgb(255, 255, 255, 0.05);
     border: 1px solid white;
     color: var(--text-color);
-    /* width: 100%; */
 }
-
+.login-error {
+    text-align: left;
+    color: rgb(163, 49, 49);
+    text-wrap: pretty;
+    font-size: 0.8rem;
+}
+.login-info {
+    text-align: left;
+}
 .submit-button {
     background-color: white;
     border: none;

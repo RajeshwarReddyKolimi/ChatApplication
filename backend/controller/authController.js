@@ -38,18 +38,24 @@ const login = async (req, res) => {
     try {
         const { username, password } = req.body;
         const user = await User.findOne({ username });
-        if (!user) res.json({ error: "Username does not exist" });
+        if (!user) {
+            res.json({ error: "Username does not exist" });
+            return;
+        }
 
         const isPasswordCorrect = await bcrypt.compare(
             password,
             user?.password || ""
         );
 
-        if (!isPasswordCorrect) res.json({ error: "Incorrect password" });
+        if (!isPasswordCorrect) {
+            res.json({ error: "Incorrect password" });
+            return;
+        }
 
         generateJWTToken(user._id, res);
 
-        res.json(user);
+        res.json({ user: user });
     } catch (e) {
         console.error(e);
     }
