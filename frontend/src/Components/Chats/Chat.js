@@ -1,11 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-
-import axios from "axios";
 import { MdSend, MdArrowBack } from "react-icons/md";
 import notification1 from "../../Assets/notify.mp3";
-import Loader from "../Utils/Loader";
-import url from "../../backendURL";
-import Welcome from "../Utils/Welcome";
 import { ReceiverContext, SocketContext } from "../Home/Dashboard";
 import Messages from "./Messages";
 import { formatDate } from "../../HelperFunctions/formatDate";
