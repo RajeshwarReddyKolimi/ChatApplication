@@ -1,0 +1,6 @@
+This favicon was generated using the following font:
+
+- Font Title: Anta
+- Font Author: Copyright 2019 The Anta Project Authors (https://github.com/Typedesigners/Anta-Regular)
+- Font Source: https://fonts.gstatic.com/s/anta/v1/gyBzhwQ3KsIyZFwxPFimIo0.ttf
+- Font License: SIL Open Font License, 1.1 (http://scripts.sil.org/OFL))

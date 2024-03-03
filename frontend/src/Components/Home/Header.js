@@ -3,6 +3,7 @@ import { LoaderContext, UserContext } from "../../App";
 import { BiLogOut } from "react-icons/bi";
 import url from "../../backendURL";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 function Header() {
     const { user, setUser } = useContext(UserContext);
@@ -24,7 +25,9 @@ function Header() {
     };
     return (
         <div className="header">
-            <h3>ChitChat</h3>
+            <h2 className="logo">
+                <Link to="/"> ChitChat </Link>
+            </h2>
             <button className="logout" onClick={logout}>
                 <BiLogOut className="icon-1" />
             </button>

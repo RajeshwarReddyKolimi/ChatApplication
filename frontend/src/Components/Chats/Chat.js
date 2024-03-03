@@ -7,12 +7,15 @@ import { formatDate } from "../../HelperFunctions/formatDate";
 import SendMessage from "./SendMessage";
 function Chat({ chatLoading, conversation, setConversation }) {
     const { socket } = useContext(SocketContext);
-    const { receiver } = useContext(ReceiverContext);
+    const { receiver, setReceiver } = useContext(ReceiverContext);
     const receiverIdRef = useRef(receiver?._id);
     const handleBack = () => {
+        setReceiver();
         window.history.back();
     };
-
+    window.addEventListener("popstate", function (event) {
+        setReceiver();
+    });
     useEffect(() => {
         receiverIdRef.current = receiver?._id;
     }, [receiver]);
