@@ -25,9 +25,9 @@ function Header() {
     };
     return (
         <div className="header">
-            <h2 className="logo">
-                <Link to="/"> ChitChat </Link>
-            </h2>
+            <Link className="logo" to="/">
+                ChitChat
+            </Link>
             <button className="logout" onClick={logout}>
                 <BiLogOut className="icon-1" />
             </button>

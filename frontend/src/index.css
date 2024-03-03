@@ -1,7 +1,7 @@
 :root {
     --text-color: white;
     --theme-color: rgb(2, 11, 19);
-    --highlight-color: rgb(0, 119, 119);
+    --highlight-color: rgb(34, 128, 128);
     --input-background-color: rgb(255, 255, 255, 0.05);
     --border-color-light: rgb(255, 255, 255, 0.4);
     --border-light: 1px solid rgb(255, 255, 255, 0.4);
@@ -85,9 +85,12 @@ code {
     justify-content: space-between;
     align-items: center;
     padding: 0.5rem;
+    color: var(--highlight-color);
 }
 .logo {
     font-family: "Anta", sans-serif;
+    font-weight: 600;
+    font-size: 1.4rem;
     color: var(--highlight-color);
 }
 .search-user-container {

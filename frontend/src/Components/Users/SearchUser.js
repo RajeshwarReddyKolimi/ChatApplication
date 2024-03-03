@@ -51,6 +51,7 @@ export default function SearchUser({ showSearchResult, setShowSearchResult }) {
                     ref={searchUserRef}
                     type="text"
                     placeholder="Search Users..."
+                    onClick={() => handleSearchUser()}
                     onChange={() => handleSearchUser()}
                 />
                 {showHideButton && (
