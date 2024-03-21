@@ -156,9 +156,7 @@ function Dashboard() {
                                         }
                                     />
                                 ) : (
-                                    <Welcome
-                                        msg={`Hello ${user && user.fullname}`}
-                                    />
+                                    <Welcome msg={`Hello`} />
                                 )}
                             </div>
                         </ReceiverContext.Provider>
